@@ -1,0 +1,17 @@
+@media only screen and (max-width: 767px) {
+   .date-time{
+       display: none !important;
+   }
+   .main-section{
+    padding-left: 0 !important;
+   }
+   .user-logo{
+       margin-left: auto;
+   }
+   .left-sidebar{
+       display: none;
+   }
+   .menu-hide-open{
+    display: block;
+}
+  }
