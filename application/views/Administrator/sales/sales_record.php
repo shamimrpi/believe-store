@@ -163,7 +163,7 @@
 									<?php if($this->session->userdata('accountType') != 'u'){?>
 									<a href="javascript:" title="Edit Sale" @click="checkReturnAndEdit(sale)"><i class="fa fa-edit"></i></a>
 									<a href="" title="Delete Sale" @click.prevent="deleteSale(sale.SaleMaster_SlNo)"><i class="fa fa-trash"></i></a>
-									<a href="#"  ><img src="<?php echo base_url('assets/zip.png/') ?>" class="zip-img" /></a>
+									<a href="#" :href="'/image-zip/'+sale.saleDetails[0].SaleDetails_SlNo "><img src="<?php echo base_url('assets/zip.png/') ?>" class="zip-img" /></a>
 									<?php }?>
 								</td>
 							</tr>
@@ -173,7 +173,7 @@
 								<td style="text-align:right;">{{ product.SaleDetails_Rate }}</td>
 								<td style="text-align:center;">{{ product.SaleDetails_TotalQuantity }}</td>
 								<td style="text-align:right;">{{ product.SaleDetails_TotalAmount }}</td>
-								<td class="text-center"><a href="#"  @click.prevent="imageZip(product.SaleDetails_SlNo)"  ><img src="<?php echo base_url('assets/zip.png/') ?>" class="zip-img mx-2" /></a> </td>
+								<td class="text-center"><a href="#"  :href="'/image-zip/'+product.SaleDetails_SlNo " ><img src="<?php echo base_url('assets/zip.png/') ?>" class="zip-img mx-2" /></a> </td>
 							</tr>
 							<tr style="font-weight:bold;">
 								<td colspan="7" style="font-weight:normal;"><strong>Note: </strong>{{ sale.SaleMaster_Description }}</td>
@@ -502,7 +502,9 @@
 				let url = '/image-zip/'+id;
 				axios.post(url)
 				.then(res => {
-					alert('ok');
+					if(res.data){
+						alert('image zip');
+					}
 				})
 			},
 			deleteSale(saleId){

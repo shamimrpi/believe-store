@@ -618,7 +618,10 @@
 				formData.append('total', JSON.stringify(this.total));
 
 
-				let url = '/add_sales';
+				let url = "/add_sales";
+				if(this.sales.salesId != 0){
+					url = "/update_sales";
+				}
 				axios.post(url, formData).then(async res => {
 					let r = res.data;
 					alert('order submited successfully');
@@ -626,6 +629,71 @@
 
 				})
 			},
+			 getSales(){
+				 axios.post('/get_sales', {salesId: this.sales.salesId}).then(res=>{
+					let r = res.data;
+					let sales = r.sales[0];
+					this.sales.salesBy = sales.AddBy;
+					this.sales.salesFrom = sales.SaleMaster_branchid;
+					this.sales.salesDate = sales.SaleMaster_SaleDate;
+					this.sales.salesType = sales.SaleMaster_SaleType;
+					this.sales.customerId = sales.SalseCustomer_IDNo;
+					this.sales.employeeId = sales.Employee_SlNo;
+					this.sales.subTotal = sales.SaleMaster_SubTotalAmount;
+					this.sales.discount = sales.SaleMaster_TotalDiscountAmount;
+					this.sales.vat = sales.SaleMaster_TaxAmount;
+					this.sales.transportCost = sales.SaleMaster_Freight;
+					this.sales.labourCost = sales.SaleMaster_LabourCost;
+					this.sales.total = sales.SaleMaster_TotalSaleAmount;
+					this.sales.paid = sales.SaleMaster_PaidAmount;
+					this.sales.previousDue = sales.SaleMaster_Previous_Due;
+					this.sales.due = sales.SaleMaster_DueAmount;
+					this.sales.note = sales.SaleMaster_Description;
+
+					this.oldCustomerId = sales.SalseCustomer_IDNo;
+					this.oldPreviousDue = sales.SaleMaster_Previous_Due;
+
+					this.vatPercent = parseFloat(this.sales.vat) * 100 / parseFloat(this.sales.subTotal);
+					this.discountPercent = parseFloat(this.sales.discount) * 100 / parseFloat(this.sales.subTotal);
+
+					this.selectedEmployee = {
+						Employee_SlNo: sales.employee_id,
+						Employee_Name: sales.Employee_Name
+					}
+
+					this.selectedCustomer = {
+						Customer_SlNo: sales.SalseCustomer_IDNo,
+						Customer_Code: sales.Customer_Code,
+						Customer_Name: sales.Customer_Name,
+						display_name: sales.Customer_Type == 'G' ? 'General Customer' : `${sales.Customer_Code} - ${sales.Customer_Name}`,
+						Customer_Mobile: sales.Customer_Mobile,
+						Customer_Address: sales.Customer_Address,
+						Customer_Type: sales.Customer_Type
+					}
+
+					r.saleDetails.forEach(product => {
+						let cartProduct = {
+							product_serialNo: product.Product_IDNo,
+							categoryName: product.ProductCategory_Name,
+							Product_Name: product.Product_Name,
+							selling_price: product.SaleDetails_Rate,
+							vat: product.SaleDetails_Tax,
+							quantity: product.SaleDetails_TotalQuantity,
+							total: product.SaleDetails_TotalAmount,
+							purchase_price: product.Purchase_Rate,
+							branchId: product.brunch_id,
+					        branchName:product.Brunch_name,
+					        product_code:product.Product_Code
+							
+						}
+
+						this.cart.push(cartProduct);
+					})
+
+					let gCustomerInd = this.customers.findIndex(c => c.Customer_Type == 'G');
+					this.customers.splice(gCustomerInd, 1);
+				})
+			}
 		
 		}
 	})

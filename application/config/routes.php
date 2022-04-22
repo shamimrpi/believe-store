@@ -592,6 +592,8 @@ $route['image-zip/(:any)'] = 'Administrator/Products/imageZip/$1';
 //marchant controller start here
 
 
+$route['dashboard'] = 'Marchant/MarchantDashboard/dashboard';
+$route['get-data'] = 'Marchant/MarchantDashboard/getData';
 $route['order-create'] = 'Marchant/Order/order';
 $route['hold-order'] = 'Marchant/Order/pendingOrder';
 $route['get-pending-order'] = 'Marchant/Order/getPendingOrder';

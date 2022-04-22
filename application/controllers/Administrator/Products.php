@@ -797,15 +797,16 @@ class Products extends CI_Controller {
     public function imageZip($id){
        
         $data = $this->db->query("select pi.image,pi.SaleDetails_SlNo from tbl_product_images as pi where pi.SaleDetails_SlNo = $id ")->result();
-        $this->load->library('zip');
         
+        $this->load->library('zip');
             foreach($data as $d){
-
-                $path = '/uploads/productImage/'.$d->image;
+                $path = FCPATH.'/uploads/productImage/'.$d->image;
+               
                 $this->zip->read_file($path);
-                print_r($path);
-                $this->zip->download('my_backup.zip');
+               
             }
+            $this->zip->download('download.zip');
+            
 
          }
    

@@ -13,17 +13,23 @@ class MarchantDashboard extends CI_Controller
      
   }
 
-   // public function dashboard(){
-   //      $data['invoice'] = $this->m_invoice->marchantInvoice();
-   //      $data['title'] = "Dashboard";
-   //      $data['martchant_content'] = $this->load->view('Marchant/dashboard/marchant_dashboard',$data,true);
-   //      $this->load->view('Marchant/marchant_master', $data);
-   // }
-   
-   public function profileUpdate(){
+   public function dashboard(){
       
-
+      
+        $data['title'] = "Dashboard";
+        $data['martchant_content'] = $this->load->view('Marchant/dashboard/index',$data,true);
+        $this->load->view('Marchant/marchant_master', $data);
    }
+   public function getData(){
+      $id = $this->session->userdata('marchant_id');
+      $complete = $this->db->query("SELECT sm.Marchant_id,sm.Status 
+      FROM  tbl_salesmaster as sm where sm.Status = 'com' and sm.Marchant_id = $id ")->num_rows();
+      // $count = count($complete);
+      // print($complete);
+      $data['complete'] = $complete;
+   }
+   
+  
     
 
 }

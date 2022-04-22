@@ -270,20 +270,7 @@
 				this.selectedProduct.total = this.selectedProduct.selling_price;
 
 			},
-			previewImage() {
-				// let selectedFiles =e.target.files;
-				let files = $('#multi_image')[0].files;
-				for (i = 0; i < files.length; i++) {
-					if (event.target.files.length > 0) {
-						this.selectedFile = event.target.files;
-
-					} else {
-						this.selectedFile = null;
-					}
-					console.log(this.selectedFile);
-				}
-
-			},
+		
 
 			addToCart() {
 				if (this.productStock <0) {
@@ -295,6 +282,7 @@
 					alert('Product exists in cart');
 					return;
 				}
+				
 				let product = {
 					product_serialNo: this.selectedProduct.Product_SlNo,
 					Product_Name: this.selectedProduct.Product_Name,
@@ -309,8 +297,22 @@
 				this.cart.push(product);
 				this.calculateTotal();
 				this.clearProduct();
-				// $('#multi_image').val('');
-				$('input([type=file]').val('');
+				
+				// $('input([type=file])').val('');
+				// $('#multi_image').val(null);
+			},
+			previewImage() {
+				// let selectedFiles =e.target.files;
+				let files = $('#multi_image')[0].files;
+				for (i = 0; i < files.length; i++) {
+					if (event.target.files.length > 0) {
+						this.selectedFile = $('#multi_image')[0].files;
+
+					} else {
+						this.selectedFile = null;
+					}
+					
+				}
 
 			},
 			clearProduct() {
@@ -325,7 +327,9 @@
 					Product_SellingPrice: 0.00,
 					total: 0.00,
 				}
-				$('#multi_image').val('');
+				// $('#multi_image').val('');
+				// this.selectedFile = null;
+				
 				// $('#custom-form').trigger('reset');
 
 			},
@@ -372,7 +376,7 @@
 				axios.post(url, formData).then(async res => {
 					let r = res.data;
 					alert('order submited successfully');
-					// location.reload();
+					location.reload();
 
 				})
 			},

@@ -55,7 +55,7 @@ body{
     top: -11px;
     right: 0
 }
-.left-sidebar{
+.left-sidebar {
     width: 220px;
     background: #224079;
     height: 92vh;
@@ -64,6 +64,7 @@ body{
     overflow-x: hidden;
     position: fixed;
     z-index: 999;
+    padding-top: 18px;
 }
 .company-logo{
     height: 135px;

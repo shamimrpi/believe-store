@@ -366,40 +366,53 @@ class Sales extends CI_Controller {
     public function updateSales(){
         $res = ['success'=>false, 'message'=>''];
         try{
-            $data = json_decode($this->input->raw_input_stream);
-            $salesId = $data->sales->salesId;
+              $carts = json_decode($this->input->post('cart'));
+              $customer = json_decode($this->input->post('customer'));
+              $sales = json_decode($this->input->post('sales'));
+              $salesId = $sales->salesId;
 
-            if(isset($data->customer)){
-                $customer = (array)$data->customer;
-                unset($customer['Customer_SlNo']);
-                unset($customer['display_name']);
-                $customer['UpdateBy'] = $this->session->userdata("FullName");
-                $customer['UpdateTime'] = date("Y-m-d H:i:s");
 
-                $this->db->where('Customer_SlNo', $data->sales->customerId)->update('tbl_customer', $customer);
-            }
+            // $sales = array(
+            //     'SalseCustomer_IDNo' => $data->sales->customerId,
+            //     'employee_id' => $data->sales->employeeId,
+            //     'SaleMaster_SaleDate' => $data->sales->salesDate,
+            //     'SaleMaster_SaleType' => $data->sales->salesType,
+            //     'SaleMaster_TotalSaleAmount' => $data->sales->total,
+            //     'SaleMaster_TotalDiscountAmount' => $data->sales->discount,
+            //     'SaleMaster_TaxAmount' => $data->sales->vat,
+            //     'SaleMaster_Freight' => $data->sales->transportCost,
+            //     'SaleMaster_SubTotalAmount' => $data->sales->subTotal,
+            //     'SaleMaster_PaidAmount' => $data->sales->paid,
+            //     'SaleMaster_DueAmount' => $data->sales->due,
+            //     'SaleMaster_Previous_Due' => $data->sales->previousDue,
+            //     'SaleMaster_Description' => $data->sales->note,
+            //     "UpdateBy" => $this->session->userdata("FullName"),
+            //     'UpdateTime' => date("Y-m-d H:i:s"),
+            //     "SaleMaster_branchid" => $this->session->userdata("BRANCHid")
+            // );
+    
+            // $this->db->where('SaleMaster_SlNo', $salesId);
+            // $this->db->update('tbl_salesmaster', $sales);
+
 
             $sales = array(
-                'SalseCustomer_IDNo' => $data->sales->customerId,
-                'employee_id' => $data->sales->employeeId,
-                'SaleMaster_SaleDate' => $data->sales->salesDate,
-                'SaleMaster_SaleType' => $data->sales->salesType,
-                'SaleMaster_TotalSaleAmount' => $data->sales->total,
-                'SaleMaster_TotalDiscountAmount' => $data->sales->discount,
-                'SaleMaster_TaxAmount' => $data->sales->vat,
-                'SaleMaster_Freight' => $data->sales->transportCost,
-                'SaleMaster_SubTotalAmount' => $data->sales->subTotal,
-                'SaleMaster_PaidAmount' => $data->sales->paid,
-                'SaleMaster_DueAmount' => $data->sales->due,
-                'SaleMaster_Previous_Due' => $data->sales->previousDue,
-                'SaleMaster_Description' => $data->sales->note,
+                'SaleMaster_TotalSaleAmount'     => $sales->total,
+                'SaleMaster_DueAmount'           => $sales->due,
+                'SaleMaster_SubTotalAmount'      => $sales->subTotal,
+                'SaleMaster_Description'         => $sales->note,
+                'AddTime'                        => date("Y-m-d H:i:s"),
+                'SaleMaster_branchid'            => 0,
+                'SaleMaster_PaidAmount'          => $sales->paid,
+                'SaleMaster_Freight'             =>$sales->delivery_Cost,
                 "UpdateBy" => $this->session->userdata("FullName"),
                 'UpdateTime' => date("Y-m-d H:i:s"),
                 "SaleMaster_branchid" => $this->session->userdata("BRANCHid")
             );
-    
+           
             $this->db->where('SaleMaster_SlNo', $salesId);
             $this->db->update('tbl_salesmaster', $sales);
+
+
             
             $currentSaleDetails = $this->db->query("select * from tbl_saledetails where SaleMaster_IDNo = ?", $salesId)->result();
             $this->db->query("delete from tbl_saledetails where SaleMaster_IDNo = ?", $salesId);
@@ -409,33 +422,101 @@ class Sales extends CI_Controller {
                     update tbl_currentinventory 
                     set sales_quantity = sales_quantity - ? 
                     where product_id = ?
-                    and branch_id = ?
-                ", [$product->SaleDetails_TotalQuantity, $product->Product_IDNo, $this->session->userdata('BRANCHid')]);
+                    
+                ", [$product->SaleDetails_TotalQuantity, $product->Product_IDNo ]);
             }
     
-            foreach($data->cart as $cartProduct){
-                $saleDetails = array(
-                    'SaleMaster_IDNo' => $salesId,
-                    'Product_IDNo' => $cartProduct->productId,
-                    'SaleDetails_TotalQuantity' => $cartProduct->quantity,
-                    'Purchase_Rate' => $cartProduct->purchaseRate,
-                    'SaleDetails_Rate' => $cartProduct->salesRate,
-                    'SaleDetails_Tax' => $cartProduct->vat,
-                    'SaleDetails_TotalAmount' => $cartProduct->total,
-                    'Status' => 'a',
-                    'AddBy' => $this->session->userdata("FullName"),
-                    'AddTime' => date('Y-m-d H:i:s'),
-                    'SaleDetails_BranchId' => $this->session->userdata("BRANCHid")
-                );
+            foreach($carts as $key=> $cartProduct){
+                $exist= $this->db->query("select * from tbl_saledetails where SaleMaster_IDNo = $salesId and Product_IDNo =$cartProduct->product_serialNo  ")->row();
+
+                if($exist!= NULL){
+
+                    $saleDetails = array(
+                        'SaleMaster_IDNo' => $salesId,
+                        'Product_IDNo' => $exist->product_serialNo,
+                        'SaleDetails_TotalQuantity' => $exist->quantity,
+                        'Purchase_Rate' => $exist->purchase_price,
+                        'SaleDetails_Rate' => $exist->selling_price,
+                        'SaleDetails_TotalAmount' => $exist->purchase_price,
+                        'Status' => 'a',
+                        'AddBy' => $this->session->userdata("FullName"),
+                        'AddTime' => date('Y-m-d H:i:s'),
+                        'SaleDetails_BranchId' => $this->session->userdata("BRANCHid")
+                    );
+                    $this->db->where('SaleMaster_IDNo', $salesId);
+                    $this->db->update('tbl_saledetails', $exist);
+                }
+                else{
+                    $saleDetails = array(
+                        'SaleMaster_IDNo' => $salesId,
+                        'Product_IDNo' => $cartProduct->product_serialNo,
+                        'SaleDetails_TotalQuantity' => $cartProduct->quantity,
+                        'Purchase_Rate' => $cartProduct->purchase_price,
+                        'SaleDetails_Rate' => $cartProduct->selling_price,
+                        'SaleDetails_TotalAmount' => $cartProduct->purchase_price,
+                        'Status' => 'a',
+                        'AddBy' => $this->session->userdata("FullName"),
+                        'AddTime' => date('Y-m-d H:i:s'),
+                        'SaleDetails_BranchId' => $this->session->userdata("BRANCHid")
+                    );
     
-                $this->db->insert('tbl_saledetails', $saleDetails);
+                    $this->db->insert('tbl_saledetails', $saleDetails);
+                    $SaleDetails_SlNo = $this->db->insert_id();
+                    
+                    
+                    $this->db->query("
+                        update tbl_currentinventory 
+                        set sales_quantity = sales_quantity + ? 
+                        where product_id = ?
+                        
+                    ", [$cartProduct->quantity, $cartProduct->product_serialNo]);
     
-                $this->db->query("
-                    update tbl_currentinventory 
-                    set sales_quantity = sales_quantity + ? 
-                    where product_id = ?
-                    and branch_id = ?
-                ", [$cartProduct->quantity, $cartProduct->productId, $this->session->userdata('BRANCHid')]);
+                    if (!empty($_FILES)) {
+                        if (isset($_FILES[$key]) || array_key_exists($key, $_FILES)){
+                           
+                           $dataInfo = array();
+                           $count = count($_FILES[$key]['tmp_name']);
+                           $image = ')'.$cartProduct->Product_Name;
+                           $dataInfo = array();
+                                  $this->load->library('upload');
+                                  $config['upload_path'] = './uploads/productImage/';
+                                  $config['allowed_types'] = 'gif|jpg|png|jpeg';
+                                  $config['max_size'] = '10000';
+                                  $config['image_width']= '4000';
+                                  $config['image_height']= '4000';
+                                //   $config['overwrite']= true;
+                                  $config['file_name']= $image;
+                                  $this->upload->initialize($config);
+                            
+                           for($i = 0; $i < $count; $i++){ 
+                               $_FILES['image']['name']     = $_FILES[$key]['name'][$i]; 
+                               $_FILES['image']['type']     = $_FILES[$key]['type'][$i]; 
+                               $_FILES['image']['tmp_name'] = $_FILES[$key]['tmp_name'][$i]; 
+                               $_FILES['image']['error']     = $_FILES[$key]['error'][$i]; 
+                               $_FILES['image']['size']     = $_FILES[$key]['size'][$i]; 
+                               
+                               $this->load->library('upload', $config);
+                               $this->upload->do_upload('image');
+                               $dataInfo[] = $this->upload->data();
+    
+                               
+                             }
+                             foreach ($dataInfo as $image) {
+                                $this->db->insert('tbl_product_images', [
+                                    'image' => $image['file_name'],
+                                    'SaleDetails_SlNo' => $SaleDetails_SlNo
+                                ]);
+                              
+                                
+                            }
+                        }
+                       
+                      
+                     }
+                }
+              
+
+
             }
     
             $res = ['success'=>true, 'message'=>'Sales Updated', 'salesId'=>$salesId];
@@ -1938,15 +2019,16 @@ class Sales extends CI_Controller {
         $this->db->update('tbl_salesmaster', $updateData);
     }
     public function getOrderProcessUpdate($id){
+        print_r($id);
         $updateData = array( 
-            'Status'      => 'com', 
+            'Status'   => 'com', 
         );
         $this->db->where('SaleMaster_SlNo',$id);
         $this->db->update('tbl_salesmaster', $updateData);
     }
     public function getOrderHoldDelete($id){
         $updateData = array( 
-            'Status'      => 'd', 
+            'Status'      => 'can', 
         );
         $this->db->where('SaleMaster_SlNo',$id);
         $this->db->update('tbl_salesmaster', $updateData);

@@ -67,15 +67,15 @@
         data: () => ({
                 orders:[],
                 columns: [
-                    { label: 'Invoice No.', field: 'Acc_Code', align: 'center',filterable: true },
-                    { label: 'Order Amount', field: 'Acc_Name', align: 'center',filterable: true },
-                    { label: 'Payment Type', field: 'Acc_Description', align: 'center',filterable: true },
-                    { label: 'Order Date', align: 'center', filterable: true },
+                    { label: 'Invoice No.', field: 'SaleMaster_InvoiceNo', align: 'center' },
+                    { label: 'Order Amount', field: 'SaleMaster_TotalSaleAmount', align: 'center' },
+                    { label: 'Payment Type', field: 'payment_type', align: 'center' },
+                    { label: 'Order Date', align: 'center', filterable: false },
                     { label: 'Status', align: 'center', filterable: false },
                     { label: 'Action', align: 'center', filterable: false }
                 ],
                 page: 1,
-                per_page: 2,
+                per_page: 10,
                 filter: '',
             }),
         

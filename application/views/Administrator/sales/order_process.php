@@ -198,7 +198,6 @@
 			update(id) {
 				axios.post('/admin-process-order-update/' + id).then(res => {
 					alert('order updated');
-					return;
 					this.getOrder();
 				})
 			},

@@ -38,7 +38,10 @@
    <nav class="sidebar custom-sidebar py-2 mb-4">
        <ul class="nav flex-column" id="nav_accordion">
            <li class="nav-item li-item">
-               <a class="nav-link a-link  " href=""><i class="fas fa-tachometer-alt-average icon"></i> Dashboard </a>
+               <a class="nav-link a-link  " href="<?php echo base_url();?>dashboard"><i class="fas fa-tachometer-alt-average icon"></i> Dashboard </a>
+           </li>
+           <li class="nav-item li-item">
+               <a class="nav-link a-link" href="<?php echo base_url();?>order-create"><i class="fa-solid fa-note-sticky  icon"></i>Order Create </a>
            </li>
            <li class="nav-item li-item">
                <a class="nav-link a-link" href="<?php echo base_url();?>complete-order"><i class="fa-solid fa-square-check icon"></i> Number of Complete </a>
@@ -52,9 +55,7 @@
            <li class="nav-item li-item">
                <a class="nav-link a-link" href="<?php echo base_url();?>cancel-order"><i class="fa-solid fa-ban icon"></i> Number of Cancel </a>
            </li>
-           <li class="nav-item li-item">
-               <a class="nav-link a-link" href="<?php echo base_url();?>order-create"><i class="fa-solid fa-note-sticky  icon"></i>Order Create </a>
-           </li>
+         
           
            <li class="nav-item li-item has-submenu">
                <a class="nav-link a-link d-flex " href="#"><i class="fa-solid fa-screwdriver-wrench icon my-auto"></i><span class="my-auto"> Settings</span> <i class="fa-solid fa-angle-down down-icon my-auto ms-auto"></i>  </a> 

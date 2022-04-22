@@ -47,7 +47,7 @@ class Order extends CI_Controller
             'SaleMaster_DueAmount'           => $purchase->due,
             'SaleMaster_Description'         => $purchase->note,
             'Status'                         => 'a',
-            "AddBy"                          => $this->session->userdata("marchant_id"),
+            "Marchant_id"                      => $this->session->userdata("marchant_id"),
             'AddTime'                        => date("Y-m-d H:i:s"),
             'SaleMaster_branchid'            => 0,
             'payment_type'                   => 'advance',
@@ -140,7 +140,7 @@ class Order extends CI_Controller
 
     public function getPendingOrder(){
         $id = $this->session->userdata('marchant_id');
-        $data=  $this->db->query("select * from tbl_salesmaster where Status = 'p' and AddBy = $id ")->result();
+        $data=  $this->db->query("select * from tbl_salesmaster where Status = 'p' and Marchant_id = $id ")->result();
        
        echo json_encode($data);
     }
@@ -153,7 +153,7 @@ class Order extends CI_Controller
 
     public function getProcessingOrder(){
         $id = $this->session->userdata('marchant_id');
-        $data=  $this->db->query("select * from tbl_salesmaster where Status = 'pro' and AddBy = $id ")->result();
+        $data=  $this->db->query("select * from tbl_salesmaster where Status = 'pro' and Marchant_id = $id ")->result();
         echo json_encode($data);
     }
 
@@ -165,7 +165,7 @@ class Order extends CI_Controller
 
     public function getCompleteOrder(){
         $id = $this->session->userdata('marchant_id');
-        $data=  $this->db->query("select * from tbl_salesmaster where Status = 'com' and AddBy = $id ")->result();
+        $data=  $this->db->query("select * from tbl_salesmaster where Status = 'com' and Marchant_id = $id ")->result();
         echo json_encode($data);
     }
 
@@ -177,7 +177,7 @@ class Order extends CI_Controller
 
     public function getCancelOrder(){
         $id = $this->session->userdata('marchant_id');
-        $data=  $this->db->query("select * from tbl_salesmaster where Status = 'can' and AddBy = $id ")->result();
+        $data=  $this->db->query("select * from tbl_salesmaster where Status = 'can' and Marchant_id = $id ")->result();
         echo json_encode($data);
     }
     public function getOrderDetails($id){

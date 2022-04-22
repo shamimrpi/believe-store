@@ -26,14 +26,14 @@
 <div id="pendingOrder">
    
 <div class="row">
-			<div class="col-md-6 form-inline my-3">
-				<div class="form-group">
+			<div class="col-md-6 form-inline my-3 ">
+				<div class="form-group p-3">
 					<label for="filter" class="sr-only">Filter</label>
 					<input type="text" class="form-control" v-model="filter" placeholder="Filter">
 				</div>
 			</div>
 			<div class="col-md-12">
-				<div class="table-responsive">
+				<div class="table-responsive p-3">
 					<datatable :columns="columns" :data="orders" :filter-by="filter" style="margin-bottom: 5px;">
 						<template scope="{ row }">
 							<tr class="text-center">
@@ -44,7 +44,7 @@
 								<td v-if="row.Status == 'com'"> Completed </td>
 								<td class="text-center"> 
 									
-									<a href="#"><i class="fa-solid fa-eye text-black"></i></a>
+                                <a :href="'/get-order-details/'+row.SaleMaster_SlNo"><i class="fa-solid fa-eye text-black"></i></a>
 								</td>
 							</tr>
 						</template>
@@ -67,15 +67,15 @@
         data: () => ({
                 orders:[],
                 columns: [
-                    { label: 'Invoice No.', field: 'Acc_Code', align: 'center' },
-                    { label: 'Order Amount', field: 'Acc_Name', align: 'center' },
-                    { label: 'Payment Type', field: 'Acc_Description', align: 'center' },
+                    { label: 'Invoice No.', field: 'SaleMaster_InvoiceNo', align: 'center' },
+                    { label: 'Order Amount', field: 'SaleMaster_TotalSaleAmount', align: 'center' },
+                    { label: 'Payment Type', field: 'payment_type', align: 'center' },
                     { label: 'Order Date', align: 'center', filterable: false },
                     { label: 'Status', align: 'center', filterable: false },
                     { label: 'Action', align: 'center', filterable: false }
                 ],
                 page: 1,
-                per_page: 1,
+                per_page: 10,
                 filter: '',
             }),
         
@@ -86,7 +86,6 @@
             getPendingOrder() {
 				axios.get('/get-complete-order').then(res => {
 					this.orders = res.data;
-                    console.log(this.orders);
 				})
 			},
         }

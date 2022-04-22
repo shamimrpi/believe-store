@@ -68,7 +68,7 @@ class MarchantLogin extends CI_Controller
                 $s_data['owner_image'] =  $data->owner_image;
                 $s_data['nid_image'] =  $data->nid_image;
                 $this->session->set_userdata($s_data);
-                redirect("order-create/");
+                redirect("dashboard");
             } else {
                 $data['message'] = "Sorry your are deactivated";
                 $this->load->view('Marchant/login', $data);
