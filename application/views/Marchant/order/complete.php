@@ -26,7 +26,7 @@
 <div id="pendingOrder">
    
 <div class="row">
-			<div class="col-md-6 form-inline my-3 ">
+			<div class="col-md-6 form-inline my-3 p-3">
 				<div class="form-group p-3">
 					<label for="filter" class="sr-only">Filter</label>
 					<input type="text" class="form-control" v-model="filter" placeholder="Filter">

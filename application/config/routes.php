@@ -595,6 +595,7 @@ $route['image-zip/(:any)'] = 'Administrator/Products/imageZip/$1';
 $route['dashboard'] = 'Marchant/MarchantDashboard/dashboard';
 $route['get-data'] = 'Marchant/MarchantDashboard/getData';
 $route['order-create'] = 'Marchant/Order/order';
+
 $route['hold-order'] = 'Marchant/Order/pendingOrder';
 $route['get-pending-order'] = 'Marchant/Order/getPendingOrder';
 $route['processing-order'] = 'Marchant/Order/ProcessingOrder';
@@ -629,4 +630,8 @@ $route['cart-product'] = 'Marchant/Cart/index';
 $route['cart-remove/(:any)'] = 'Marchant/Cart/cartRemove/$1';
 $route['marchant-get_product_stock']	=	'Marchant/Product/getProductStock';
 
+$route['wholeseller-info']	=	'Marchant/Profile/wholeseller';
+$route['order-edit/(:any)/(:any)'] = 'Marchant/Order/orderEdit/$1/$2';
+$route['marchant-get-sales/(:any)'] = 'Marchant/Order/getSales/$1';
 
+// $route['sales/(:any)/(:any)'] = 'Administrator/Sales/salesEdit/$1/$2';

@@ -26,14 +26,14 @@
 <div id="pendingOrder">
    
 <div class="row">
-			<div class="col-md-6 form-inline my-3">
+			<div class="col-md-6 form-inline my-3 p-3">
 				<div class="form-group">
 					<label for="filter" class="sr-only">Filter</label>
 					<input type="text" class="form-control" v-model="filter" placeholder="Filter">
 				</div>
 			</div>
 			<div class="col-md-12">
-				<div class="table-responsive">
+				<div class="table-responsive p-3">
 					<datatable :columns="columns" :data="orders" :filter-by="filter" style="margin-bottom: 5px;">
 						<template scope="{ row }">
 							<tr class="text-center">

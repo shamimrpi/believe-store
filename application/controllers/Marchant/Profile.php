@@ -44,7 +44,6 @@ class Profile extends CI_Controller{
     public function profileUpdate(){
         $form = json_decode($this->input->post('form'));
         if($form->id != ''){
-            print_r($form);
             if (isset($_FILES)) {
                 $this->load->library('upload');
                 $config['upload_path'] = './uploads/wholeseller/';
@@ -105,5 +104,15 @@ class Profile extends CI_Controller{
         
     }
 }
+    public function wholeseller(){
+        $martchant_id = $this->session->userdata('marchant_id');
+        $marchant_data = $this->db->query("select * from tbl_marchant_wholesaler where customer_type = 'wholeseller' and id = $martchant_id ")->row();
+        $customer_id = $marchant_data->customer_id;
+        $data = $this->db->query("select * from tbl_customer where Customer_SlNo = $customer_id  ")->row();
+      
+        echo json_encode($data);
+        
+        
+    }
   
 }

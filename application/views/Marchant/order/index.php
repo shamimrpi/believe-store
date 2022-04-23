@@ -3,7 +3,7 @@
 		<div class="col-md-8 ">
 			<div class="form-area custom-card">
 				<h5 class="heading"><i class="fa fa-user-plus"></i> Supplier & Product Information</h5>
-
+				<?php $customer_id = $customer->Customer_SlNo ?>
 
 				<div class="row">
 					<div class="col-md-6">
@@ -14,18 +14,20 @@
 								<input type="text" v-model="purchase.invoiceNo" class="form-control" v-model="selectedCustomer.Customer_Name" readonly />
 								</div>
 							</div>
-							<div class="form-group">
+							<?php if($customer->Customer_Type == 'marchant') { ?> 
+							<div  class="form-group" >
 								<label for="name">Select Customer<span class="text-danger">*</span> </label>
 								<v-select v-bind:options="customers" v-model="selectedCustomer" label="display_name"></v-select>
 							</div>
-							<div class="form-group" style="display:none;" v-bind:style="{display: selectedCustomer.Customer_Type == 'G' ? '' : 'none'}">
+							<?php } ?>
+							<div class="form-group" style="display:none;" v-bind:style="{display: selectedCustomer.Customer_Type == 'wholesaller' ? 'none' : ''}">
 								<label class="col-xs-4 control-label no-padding-right"> Name </label>
 								<div class="col-xs-8">
 									<input type="text" id="customerName" placeholder="Customer Name" class="form-control" v-model="selectedCustomer.Customer_Name" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true" />
 								</div>
 							</div>
 
-							<div class="form-group">
+							<div class="form-group" v-if="">
 								<label class="col-xs-4 control-label no-padding-right"> Mobile No </label>
 								<div class="col-xs-8">
 									<input type="text" id="mobileNo" placeholder="Mobile No" class="form-control" v-model="selectedCustomer.Customer_Mobile" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true" />
@@ -62,7 +64,7 @@
 										<h5>{{productStockText}}</h5>
 										<p class="text-success">{{productStock}}</p>
 									</div>
-									
+								
 								</div>
 								<div class="form-group">
 									<label for="name">Purchase Price <span class="text-danger">*</span> </label>
@@ -73,10 +75,19 @@
 									<label for="name">Selling Price <span class="text-danger">*</span> </label>
 									<input type="text" v-model="selectedProduct.Product_SellingPrice" class="form-control shadow-none " placeholder="Selling Price" required>
 								</div>
-								<div class="form-group">
+								<?php if($customer->Customer_Type == 'marchant') {?>
+									<div class="form-group">
 									<label for="name">Muliple Image Upload </label>
 									<input type="file" name="images" id="multi_image" ref="imageUpload" class="form-control form-control-sm" maxlength="10" multiple="multiple" @change="previewImage" required/>
 								</div>
+								<?php } ?>
+								<?php   if($customer->Customer_Type == 'wholeseller') {?> 
+
+									<div class="form-group">
+										<label for="name"> Image Upload </label>
+										<input type="file" name="images" id="multi_image" ref="imageUpload" class="form-control form-control-sm" maxlength="10" @change="previewImage" required/>
+									</div>
+								<?php  } ?>
 
 							</div>
 							<div class="d-flex mt-3">
@@ -86,8 +97,7 @@
 					</div>
 
 				</div>
-
-
+								
 				<div class="row mt-3">
 					<table class="w-100 cart-table" style="display:none;" v-bind:style="{display: cart.length > 0 ? '' : 'none'}">
 						<tr class="table-heading">
@@ -125,6 +135,7 @@
 				</div>
 			</div>
 		</div>
+									
 		<div class="col-md-4 ">
 			<div class="form-area custom-card card">
 				<h5 class="heading"><i class="fas fa-list me-1"></i>Amount Details</h5>
@@ -155,7 +166,9 @@
 			categories: [],
 			images: [],
 			selectedFile: null,
+			customer_id: '<php echo $customer_id ?>',
 			purchase: {
+				salesId: parseInt('<?php echo $salesId;?>'),
 				Customer_Name: '',
 				invoiceNo: '<?php echo $invoice; ?>',
 				subTotal: 0.00,
@@ -204,7 +217,9 @@
 			// this.getProduct();
 			this.getCategories();
 			this.getCustomers();
+			this.getSales();
 			// this.getCart();
+			// console.log(this.selectedCustomer.Customer_Type);
 		},
 		methods: {
 			getProduct() {
@@ -212,7 +227,6 @@
 					isService: 'false'
 				}).then(res => {
 					this.products = res.data;
-					console.log(this.products);
 				})
 			},
 			getCategories() {
@@ -227,6 +241,7 @@
 					this.products = res.data;
 				})
 			},
+		
 
 			calculateTotal() {
 
@@ -240,7 +255,7 @@
 			async getCustomers() {
 				await axios.post('/marchant-get_customers').then(res => {
 					this.customers = res.data;
-					console.log(this.customers);
+					
 				
 				})
 			},
@@ -333,6 +348,7 @@
 				// $('#custom-form').trigger('reset');
 
 			},
+		
 
 			async savePurchase() {
 				if (this.selectedCustomer.Customer_SlNo == '') {
@@ -376,7 +392,7 @@
 				axios.post(url, formData).then(async res => {
 					let r = res.data;
 					alert('order submited successfully');
-					location.reload();
+					// location.reload();
 
 				})
 			},
@@ -385,6 +401,53 @@
 				// }
 				this.cart.splice(ind, 1);
 				this.calculateTotal();
+			},
+
+			getSales(){
+				 let id = this.purchase.salesId;
+				  axios.get('/marchant-get-sales/'+id).then(res=>{
+					  console.log(res.data.sales.SalseCustomer_IDNo);
+					let r = res.data.sales[0];
+					this.purchase.salesType = r.SaleMaster_SaleType;
+					this.purchase.subTotal = r.SaleMaster_SubTotalAmount;
+					this.total = r.SaleMaster_TotalSaleAmount;
+					this.purchase.payment_type = r.payment_type;
+
+					// SaleMaster_TotalSaleAmount
+					console.log(r.SalseCustomer_IDNo);
+					this.selectedCustomer = {
+						Customer_SlNo: r.SalseCustomer_IDNo,
+						Customer_Code: r.Customer_Code,
+						Customer_Name: r.Customer_Name,
+						display_name: r.Customer_Type ==  `${r.Customer_Code} - ${r.Customer_Name}`,
+						Customer_Mobile: r.Customer_Mobile,
+						Customer_Address: r.Customer_Address,
+						Customer_Type: r.Customer_Type
+					}
+
+					console.log(res.data.saleDetails);
+			
+					
+					res.data.saleDetails.forEach(product => {
+						let cartProduct = {
+							product_serialNo: product.Product_IDNo,
+							Product_Name: product.Product_Name,
+							product_code: product.Product_Code,
+							quantity: 1,
+							selling_price: product.SaleDetails_TotalAmount,
+							purchase_price: product.Product_Purchase_Rate,
+							total: product.total,
+							
+						}
+
+						this.cart.push(cartProduct);
+					})
+				
+
+					let gCustomerInd = this.customers.findIndex(c => c.Customer_Type == 'G');
+					this.customers.splice(gCustomerInd, 1);
+					
+				})
 			},
 
 

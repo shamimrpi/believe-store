@@ -617,8 +617,8 @@ class Products extends CI_Controller {
 									<?php echo $vallproduct->color_name; ?>
 									</span>
 								</td>
-								<!--<td class="hidden-480"><?php echo $vallproduct->Product_Purchase_Rate; ?></td>
-								<td class="hidden-480"><?php echo $vallproduct->Product_SellingPrice; ?></td>-->
+								<!-- <td class="hidden-480"><?php echo $vallproduct->Product_Purchase_Rate; ?></td>
+								<td class="hidden-480"><?php echo $vallproduct->Product_SellingPrice; ?></td> -->
 
 								<td>
 									<div class="hidden-sm hidden-xs action-buttons">

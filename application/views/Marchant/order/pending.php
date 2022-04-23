@@ -26,14 +26,14 @@
 <div id="pendingOrder">
    
 <div class="row">
-			<div class="col-md-6 form-inline my-3">
+			<div class="col-md-6 form-inline my-3 p-3">
 				<div class="form-group">
 					<label for="filter" class="sr-only">Filter</label>
 					<input type="text" class="form-control" v-model="filter" placeholder="Filter">
 				</div>
 			</div>
 			<div class="col-md-12">
-				<div class="table-responsive">
+				<div class="table-responsive p-3">
 					<datatable :columns="columns" :data="orders" :filter-by="filter" style="margin-bottom: 5px;">
 						<template scope="{ row }">
 							<tr class="text-center">
@@ -45,6 +45,7 @@
 								<td v-if="row.Status == 'p'"> Pending </td>
 								<td class="text-center"> 
 									<a :href="'/get-order-details/'+row.SaleMaster_SlNo"><i class="fa-solid fa-eye text-black"></i></a>
+									<a href="javascript:" title="Edit Sale" @click="checkReturnAndEdit(row)"><i class="fa fa-edit"></i></a>
 								</td>
 							</tr>
 						</template>
@@ -86,6 +87,20 @@
             getPendingOrder() {
 				axios.get('/get-pending-order').then(res => {
 					this.orders = res.data;
+				})
+			},
+            checkReturnAndEdit(sale){
+                console.log(sale);
+				axios.get('/check_sale_return/' + sale.SaleMaster_InvoiceNo).then(res=>{
+					if(res.data.found){
+						alert('Unable to edit. Sale return found!');
+					}else{
+						if(sale.is_service == 'true'){
+							location.replace('/sales/service/'+sale.SaleMaster_SlNo);
+						}else{
+							location.replace('/order-edit/product/'+sale.SaleMaster_SlNo);
+						}
+					}
 				})
 			},
         }

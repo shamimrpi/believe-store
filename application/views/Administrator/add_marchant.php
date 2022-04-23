@@ -128,7 +128,7 @@
                         <label class="control-label col-md-4">Customer Type:</label>
                         <div class="col-md-7">
                             <input type="radio" name="customerType" value="marchant" v-model="form.type" > Marchant
-                            <input type="radio" name="customerType" value="wholesale" v-model="form.type"> Wholesale
+                            <input type="radio" name="customerType" value="wholesaller" v-model="form.type"> Wholesaller
                         </div>
                     </div>
 

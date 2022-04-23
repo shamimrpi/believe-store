@@ -46,6 +46,7 @@ class MarchantLogin extends CI_Controller
         m.address,
         m.nid,
         m.nid_image,
+        m.customer_type,
         m.owner_image,
         m.status AS m_status
         FROM tbl_marchant_wholesaler AS m
@@ -67,6 +68,8 @@ class MarchantLogin extends CI_Controller
                 $s_data['marchant_nid'] = $data->nid;
                 $s_data['owner_image'] =  $data->owner_image;
                 $s_data['nid_image'] =  $data->nid_image;
+                $s_data['customer_type'] =  $data->customer_type;
+                $s_data['customer_id'] =  $data->customer_id;
                 $this->session->set_userdata($s_data);
                 redirect("dashboard");
             } else {
@@ -84,6 +87,8 @@ class MarchantLogin extends CI_Controller
         $this->session->unset_userdata('marchant_id');
         $this->session->unset_userdata('marchant_name');
         $this->session->unset_userdata('marchant_username');
+        $this->session->unset_userdata('customer_type');
+        $this->session->unset_userdata('customer_id');
         redirect("user-login");
     }
 
@@ -109,7 +114,7 @@ class MarchantLogin extends CI_Controller
 
         $data = array(
             'name'          => $inputs->name,
-            'customer_type' => 'Marchant',
+            'customer_type' => 'marchant',
             'mobile'        => $inputs->mobile,
             'username'      => $inputs->mobile,
             'password'      => md5($inputs->password),
@@ -172,7 +177,7 @@ class MarchantLogin extends CI_Controller
 
         $data = array(
             'name'          => $form->name,
-            'customer_type' => 'Wholeseller',
+            'customer_type' => 'wholeseller',
             'mobile'        => $form->mobile,
             'username'      => $form->mobile,
             'nid'           => $form->voter_id,

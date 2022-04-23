@@ -1,6 +1,6 @@
 
 
-<div id="pendingOrder" class="mt-3">
+<div id="pendingOrder" class="mt-3 p-3">
     <h5 class="text-center">Order Details</h5>
     <table class="w-100 table order-table">
         <tr class="text-center">

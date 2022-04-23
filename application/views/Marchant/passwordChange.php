@@ -8,7 +8,7 @@
 
 <div id="pendingOrder">
 
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center my-5">
             <h5 class="text-center">Password Change</h5>
         <div class="col-md-5">
             <div class="passwordChangeForm">
