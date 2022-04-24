@@ -25,7 +25,7 @@
 <div class="user-logo  position-relative " onclick='profile()'>
     <img src="<?php echo base_url(); ?>uploads/wholeseller/<?php echo $this->session->userdata('owner_image'); ?>" alt="Avatar Logo" style="width:40px;" class="rounded-pill"> 
     <ul class="header-right-toggle position-absolute">
-        <p class="text-white toggle-username"><?php echo $this->session->userdata('marchant_username'); ?></p>
+        <p class="text-white toggle-username"><?php echo $this->session->userdata('marchant_name'); ?></p>
         <!-- <li><a href="#"><i class="fas fa-user me-1"></i> Profile</a></li> -->
         <li><a href="<?php echo base_url();?>password-change"><i class="fas fa-wrench me-1"></i> Changer Password</a></li>
         <li><a href="<?php echo base_url();?>customer-logout" onclick="return confirm('Are you sure! Logout from dashboard.')"><i class="fas fa-sign-out-alt text-warning me-1"></i> Logout</a></li>

@@ -40,6 +40,7 @@ if ($module == 'dashboard' or $module == '') { ?>
 						</a>
 					</div>
 				</div>
+			
 
 				<div class="col-md-3 col-xs-6 section4">
 					<div class="col-md-12 section122" style="background-color:#dcf5ea;" onmouseover="this.style.background = '#bdecd7'" onmouseout="this.style.background = '#dcf5ea'">
@@ -393,6 +394,62 @@ if ($module == 'dashboard' or $module == '') { ?>
 					<h3>Sales Module </h3>
 				</div>
 
+				<?php if (array_search("admin-order-hold", $access) > -1 || isset($CheckSuperAdmin) || isset($CheckAdmin)) : ?>
+					<div class="col-md-2 col-xs-6 ">
+						<div class="col-md-12 section20">
+							<a href="<?php echo base_url(); ?>admin-order-hold">
+								<div class="logo">
+									<i class="menu-icon fa fa-usd"></i>
+								</div>
+								<div class="textModule">
+									Order Hold
+								</div>
+							</a>
+						</div>
+					</div>
+				<?php endif; ?>
+				<?php if (array_search("admin-order-process", $access) > -1 || isset($CheckSuperAdmin) || isset($CheckAdmin)) : ?>
+					<div class="col-md-2 col-xs-6 ">
+						<div class="col-md-12 section20">
+							<a href="<?php echo base_url(); ?>admin-order-process">
+								<div class="logo">
+									<i class="menu-icon fa fa-usd"></i>
+								</div>
+								<div class="textModule">
+									Order Process
+								</div>
+							</a>
+						</div>
+					</div>
+				<?php endif; ?>
+				<?php if (array_search("admin-order-cancel", $access) > -1 || isset($CheckSuperAdmin) || isset($CheckAdmin)) : ?>
+					<div class="col-md-2 col-xs-6 ">
+						<div class="col-md-12 section20">
+							<a href="<?php echo base_url(); ?>admin-order-cancel">
+								<div class="logo">
+									<i class="menu-icon fa fa-usd"></i>
+								</div>
+								<div class="textModule">
+									Order Cancel
+								</div>
+							</a>
+						</div>
+					</div>
+				<?php endif; ?>
+				<?php if (array_search("admin-order-complete", $access) > -1 || isset($CheckSuperAdmin) || isset($CheckAdmin)) : ?>
+					<div class="col-md-2 col-xs-6 ">
+						<div class="col-md-12 section20">
+							<a href="<?php echo base_url(); ?>admin-order-complete">
+								<div class="logo">
+									<i class="menu-icon fa fa-usd"></i>
+								</div>
+								<div class="textModule">
+									Order Completed
+								</div>
+							</a>
+						</div>
+					</div>
+				<?php endif; ?>
 				<?php if (array_search("sales/product", $access) > -1 || isset($CheckSuperAdmin) || isset($CheckAdmin)) : ?>
 					<div class="col-md-2 col-xs-6 ">
 						<div class="col-md-12 section20">

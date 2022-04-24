@@ -1,23 +1,30 @@
 <style>
 	.single-box {
-		width: 200px;
-		height: 150px;
-		background-color: #ddd;
-		color: #000;
-		background: #a8ff78;
-		background: -webkit-linear-gradient(to right, #78ffd6, #a8ff78);
-		background: linear-gradient(to right, #78ffd6, #a8ff78);
-		margin: 20px;
-		font-size: 30px;
-		text-align: center;
-	}
+    width: 200px;
+    height: 150px;
+    background-color: #ddd;
+    color: #000;
+    background: #a8ff78;
+    background: -webkit-linear-gradient(to right, #78ffd6, #a8ff78);
+    background: linear-gradient(to right, #78ffd6, #a8ff78);
+    margin: 20px;
+    font-size: 30px;
+    text-align: center;
+    box-shadow: 0 0 10px #461a1a;
+}
 	.single-box a{
 		text-decoration: none;
 		color: #000;
 	}
+	a p{
+		font-weight: 700;
+		color: #542d2d;
+	}
 </style>
 <div id="order">
+		<h3 class="text-center mt-3">Welcome to Dashboard</h3>
 	<div class="row justify-content-center mt-3">
+
 		<div class="single-box">
 			<a href="<?php echo base_url();?>complete-order">
 			<p class="py-2">
