@@ -372,30 +372,7 @@ class Sales extends CI_Controller {
               $salesId = $sales->salesId;
 
 
-            // $sales = array(
-            //     'SalseCustomer_IDNo' => $data->sales->customerId,
-            //     'employee_id' => $data->sales->employeeId,
-            //     'SaleMaster_SaleDate' => $data->sales->salesDate,
-            //     'SaleMaster_SaleType' => $data->sales->salesType,
-            //     'SaleMaster_TotalSaleAmount' => $data->sales->total,
-            //     'SaleMaster_TotalDiscountAmount' => $data->sales->discount,
-            //     'SaleMaster_TaxAmount' => $data->sales->vat,
-            //     'SaleMaster_Freight' => $data->sales->transportCost,
-            //     'SaleMaster_SubTotalAmount' => $data->sales->subTotal,
-            //     'SaleMaster_PaidAmount' => $data->sales->paid,
-            //     'SaleMaster_DueAmount' => $data->sales->due,
-            //     'SaleMaster_Previous_Due' => $data->sales->previousDue,
-            //     'SaleMaster_Description' => $data->sales->note,
-            //     "UpdateBy" => $this->session->userdata("FullName"),
-            //     'UpdateTime' => date("Y-m-d H:i:s"),
-            //     "SaleMaster_branchid" => $this->session->userdata("BRANCHid")
-            // );
-    
-            // $this->db->where('SaleMaster_SlNo', $salesId);
-            // $this->db->update('tbl_salesmaster', $sales);
-
-
-            $sales = array(
+            $sale = array(
                 'SaleMaster_TotalSaleAmount'     => $sales->total,
                 'SaleMaster_DueAmount'           => $sales->due,
                 'SaleMaster_SubTotalAmount'      => $sales->subTotal,
@@ -410,7 +387,7 @@ class Sales extends CI_Controller {
             );
            
             $this->db->where('SaleMaster_SlNo', $salesId);
-            $this->db->update('tbl_salesmaster', $sales);
+            $this->db->update('tbl_salesmaster', $sale);
 
 
             
@@ -427,26 +404,8 @@ class Sales extends CI_Controller {
             }
     
             foreach($carts as $key=> $cartProduct){
-                $exist= $this->db->query("select * from tbl_saledetails where SaleMaster_IDNo = $salesId and Product_IDNo =$cartProduct->product_serialNo  ")->row();
-
-                if($exist!= NULL){
-
-                    $saleDetails = array(
-                        'SaleMaster_IDNo' => $salesId,
-                        'Product_IDNo' => $exist->product_serialNo,
-                        'SaleDetails_TotalQuantity' => $exist->quantity,
-                        'Purchase_Rate' => $exist->purchase_price,
-                        'SaleDetails_Rate' => $exist->selling_price,
-                        'SaleDetails_TotalAmount' => $exist->purchase_price,
-                        'Status' => 'a',
-                        'AddBy' => $this->session->userdata("FullName"),
-                        'AddTime' => date('Y-m-d H:i:s'),
-                        'SaleDetails_BranchId' => $this->session->userdata("BRANCHid")
-                    );
-                    $this->db->where('SaleMaster_IDNo', $salesId);
-                    $this->db->update('tbl_saledetails', $exist);
-                }
-                else{
+                
+                    
                     $saleDetails = array(
                         'SaleMaster_IDNo' => $salesId,
                         'Product_IDNo' => $cartProduct->product_serialNo,
@@ -476,7 +435,7 @@ class Sales extends CI_Controller {
                            
                            $dataInfo = array();
                            $count = count($_FILES[$key]['tmp_name']);
-                           $image = ')'.$cartProduct->Product_Name;
+                           $image = $sales->invoiceNo.')'.$cartProduct->Product_Name;
                            $dataInfo = array();
                                   $this->load->library('upload');
                                   $config['upload_path'] = './uploads/productImage/';
@@ -499,20 +458,24 @@ class Sales extends CI_Controller {
                                $this->upload->do_upload('image');
                                $dataInfo[] = $this->upload->data();
     
-                               
+                              
+                              
                              }
-                             foreach ($dataInfo as $image) {
-                                $this->db->insert('tbl_product_images', [
-                                    'image' => $image['file_name'],
-                                    'SaleDetails_SlNo' => $SaleDetails_SlNo
-                                ]);
+                             if(isset($dataInfo)){
+                                foreach ($dataInfo as $image) {
+                                    
+                                    $this->db->insert('tbl_product_images', [
+                                        'image' => $image['file_name'] ,
+                                        'SaleDetails_SlNo' => $SaleDetails_SlNo
+                                    ]);
+                             }
+                           
                               
                                 
                             }
                         }
                        
                       
-                     }
                 }
               
 

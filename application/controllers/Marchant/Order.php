@@ -55,7 +55,7 @@ class Order extends CI_Controller
             'SaleMaster_DueAmount'           => $purchase->due,
             'SaleMaster_Description'         => $purchase->note,
             'Status'                         => 'a',
-            "Marchant_id"                      => $this->session->userdata("marchant_id"),
+            "Marchant_id"                     => $this->session->userdata("marchant_id"),
             'AddTime'                        => date("Y-m-d H:i:s"),
             'SaleMaster_branchid'            => 0,
             'payment_type'                   => 'advance',
@@ -85,12 +85,14 @@ class Order extends CI_Controller
                 $this->db->where('SaleMaster_IDNo', $salesId);
                 $this->db->update('tbl_saledetails', $exist);
             } else {
+               
                 $saleDetails = [
                     'SaleMaster_IDNo' => $salesId,
-                    'SalseCustomer_IDNo' => $customerId,
+                    'SalseCustomer_IDNo' =>$customerId,
                     'Product_IDNo' => $cart->product_serialNo,
                     'SaleDetails_TotalQuantity' => '1',
                     'Purchase_Rate' => $cart->purchase_price,
+                    'SaleDetails_Rate' => $cart->selling_price,
                     'SaleDetails_TotalAmount' => $total,
                     'Status' => 'p',
                     'AddBy' => $this->session->userdata("marchant_id"),
@@ -103,11 +105,11 @@ class Order extends CI_Controller
 
                 //update stock
                 $this->db->query("
-            update tbl_currentinventory 
-            set sales_quantity = sales_quantity + ? 
-            where product_id = ?
-            and branch_id = ?
-        ", [$cart->quantity, $cart->product_serialNo, $this->session->userdata('BRANCHid')]);
+                    update tbl_currentinventory 
+                    set sales_quantity = sales_quantity + ? 
+                    where product_id = ?
+                    and branch_id = ? ",
+                     [$cart->quantity, $cart->product_serialNo, $this->session->userdata('BRANCHid')]);
 
                 if (!empty($_FILES)) {
                     if (isset($_FILES[$key]) || array_key_exists($key, $_FILES)) {
@@ -145,6 +147,137 @@ class Order extends CI_Controller
                 }
             }
         }
+    }
+
+    public function orderUpdate(){
+      
+                $carts = json_decode($this->input->post('new_cart'));
+                $customer = json_decode($this->input->post('customer'));
+                $purchase = json_decode($this->input->post('purchase'));
+                $total = json_decode($this->input->post('total'));
+                $remove_id = json_decode($this->input->post('remove_id'));
+                
+
+
+                $sales = array(
+                'SaleMaster_TotalSaleAmount'     => $purchase->total,
+                'SaleMaster_SubTotalAmount'      => $purchase->subTotal,
+                'SaleMaster_Description'         => $purchase->note,
+                'AddTime'                        => date("Y-m-d H:i:s"),
+                'SaleMaster_branchid'            => 0,
+                "UpdateBy" => $this->session->userdata("FullName"),
+                'UpdateTime' => date("Y-m-d H:i:s"),
+                'payment_type'                   => 'advance',
+                "Marchant_id"                     => $this->session->userdata("marchant_id"),
+                "SaleMaster_TotalSaleAmount"                     => $total,
+            );
+           
+            $this->db->where('SaleMaster_SlNo', $purchase->salesId);
+            $this->db->update('tbl_salesmaster', $sales);
+
+            foreach($remove_id as $delete_id){
+                $this->db->query("delete from tbl_saledetails where SaleDetails_SlNo = ?", $delete_id); 
+                $images = $this->db->query("select * from tbl_product_images where SaleDetails_SlNo =$delete_id ")->row();
+                $data_image = $images->image;
+                if($data_image){
+                    @unlink('/uploads/productImage/'.$data_image);
+                    $this->db->query("delete from tbl_product_images where SaleDetails_SlNo = ?", $delete_id); 
+                }
+                $this->db->query("
+                    update tbl_currentinventory 
+                    set sales_quantity = sales_quantity - ? 
+                    where product_id = ?
+                    
+                ", [-1, $images->Product_IDNo ]);
+            }
+            
+           
+            foreach($carts as $key=> $cartProduct){
+               
+               
+                    $saleDetails = array(
+                        'SaleMaster_IDNo' => $purchase->salesId,
+                        'Product_IDNo' => $cartProduct->product_serialNo,
+                        'SaleDetails_TotalQuantity' => $cartProduct->quantity,
+                        'Purchase_Rate' => $cartProduct->purchase_price,
+                        'SaleDetails_Rate' => $cartProduct->selling_price,
+                        'SaleDetails_TotalAmount' => $cartProduct->purchase_price,
+                        'Status' => 'a',
+                        'AddBy' => $this->session->userdata("FullName"),
+                        'AddTime' => date('Y-m-d H:i:s'),
+                    );
+    
+                    $this->db->insert('tbl_saledetails', $saleDetails);
+                    $SaleDetails_SlNo = $this->db->insert_id();
+                    
+                    
+                    $this->db->query("
+                        update tbl_currentinventory 
+                        set sales_quantity = sales_quantity + ? 
+                        where product_id = ?
+                        
+                    ", [$cartProduct->quantity, $cartProduct->product_serialNo]);
+    
+                    if (!empty($_FILES)) {
+                        if (isset($_FILES[$key]) || array_key_exists($key, $_FILES)){
+                           
+                           $dataInfo = array();
+                           $count = count($_FILES[$key]['tmp_name']);
+                           $image_name =  $purchase->invoiceNo .')'.$cartProduct->Product_Name;
+                           $dataInfo = array();
+                                  $this->load->library('upload');
+                                  $config['upload_path'] = './uploads/productImage/';
+                                  $config['allowed_types'] = 'gif|jpg|png|jpeg';
+                                  $config['max_size'] = '10000';
+                                  $config['image_width']= '4000';
+                                  $config['image_height']= '4000';
+                                //   $config['overwrite']= true;
+                                  $config['file_name']= $image_name;
+                                  $this->upload->initialize($config);
+                            
+                           for($i = 0; $i < $count; $i++){ 
+                               $_FILES['image']['name']     = $_FILES[$key]['name'][$i]; 
+                               $_FILES['image']['type']     = $_FILES[$key]['type'][$i]; 
+                               $_FILES['image']['tmp_name'] = $_FILES[$key]['tmp_name'][$i]; 
+                               $_FILES['image']['error']     = $_FILES[$key]['error'][$i]; 
+                               $_FILES['image']['size']     = $_FILES[$key]['size'][$i]; 
+                               
+                               $this->load->library('upload', $config);
+                               $this->upload->do_upload('image');
+                               $dataInfo[] = $this->upload->data();
+    
+                              
+                              
+                             }
+                             if(isset($dataInfo)){
+                                foreach ($dataInfo as $image) {
+                                   
+                                    $this->db->insert('tbl_product_images', [
+                                        'image' =>  $image['file_name'],
+                                        'SaleDetails_SlNo' => $SaleDetails_SlNo
+                                    ]);
+                             }
+                           
+                              
+                                
+                            }
+                        }
+                     
+                       
+                      
+                }
+
+              
+               
+              
+
+
+            }
+    
+            $res = ['success'=>true, 'message'=>'Sales Updated', 'salesId'=>$purchase->salesId];
+
+
+        echo json_encode($res);
     }
 
     public function pendingOrder()
@@ -233,30 +366,30 @@ class Order extends CI_Controller
         $data['isService'] = $productOrService == 'product' ? 'false' : 'true';
         $data['salesId'] = $salesId;
         $data['invoice'] = $sales->SaleMaster_InvoiceNo;
-        $data['martchant_content'] = $this->load->view('Marchant/order/index', $data, TRUE);
+        $data['martchant_content'] = $this->load->view('Marchant/order/edit', $data, TRUE);
         $this->load->view('Marchant/marchant_master', $data);
     }
 
     public function getSales($id)
     {
 
+       
         $saleDetails = $this->db->query("
-                select 
-                    sd.*,
+        select  sd.*,
                     p.Product_Code,
                     p.Product_Name,
-                    pc.ProductCategory_Name,
-                    u.Unit_Name
+                    sd.SaleDetails_SlNo
                 from tbl_saledetails sd
                 join tbl_product p on p.Product_SlNo = sd.Product_IDNo
-                join tbl_productcategory pc on pc.ProductCategory_SlNo = p.ProductCategory_ID
-                join tbl_unit u on u.Unit_SlNo = p.Unit_ID
                 where sd.SaleMaster_IDNo = ?
             ", $id)->result();
 
+
+           
         $res['saleDetails'] = $saleDetails;
-        // print_r($saleDetails);
-        // exit;
+      
+       
+
 
         $sales = $this->db->query("
         select 
@@ -271,6 +404,7 @@ class Order extends CI_Controller
         from tbl_salesmaster sm
         left join tbl_customer c on c.Customer_SlNo = sm.SalseCustomer_IDNo
         left join tbl_brunch br on br.brunch_id = sm.SaleMaster_branchid
+     
         where  sm.Status = 'p' and sm.SaleMaster_SlNo = $id
         order by sm.SaleMaster_SlNo desc
         ")->result();

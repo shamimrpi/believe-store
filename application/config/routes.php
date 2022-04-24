@@ -626,6 +626,7 @@ $route['marchant-get_categories'] = 'Marchant/ProductController/getCategories';
 $route['marchant-get_product/(:any)']	= 'Marchant/ProductController/getProductCategory/$1';
 $route['marchant-get_customers'] = 'Marchant/Customer/getCustomers';
 $route['marchant-order'] = 'Marchant/Order/store';
+$route['marchant-order-update'] = 'Marchant/Order/orderUpdate';
 $route['cart-product'] = 'Marchant/Cart/index';
 $route['cart-remove/(:any)'] = 'Marchant/Cart/cartRemove/$1';
 $route['marchant-get_product_stock']	=	'Marchant/Product/getProductStock';

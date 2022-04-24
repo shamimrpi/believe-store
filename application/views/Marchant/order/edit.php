@@ -114,7 +114,7 @@
 							<td>{{ product.Product_Name }}</td>
 							<td>{{ product.quantity }}</td>
 							<td>{{ product.selling_price }}</td>
-							<td><a href="#" v-on:click.prevent="removeFromCart(sl)"><i class="fa fa-trash text-danger"></i></a></td>
+							<td><a href="#" v-on:click.prevent="removeFromCart(sl,product.SaleDetails_SlNo)"><i class="fa fa-trash text-danger"></i></a></td>
 						</tr>
 						</tr>
                         <tr>
@@ -164,6 +164,8 @@
 			products: [],
 			customers: [],
 			categories: [],
+			new_cart: [],
+			exist_cart: [],
 			images: [],
 			selectedFile: null,
 			customer_id: '<php echo $customer_id ?>',
@@ -207,6 +209,7 @@
 				Customer_Email: ''
 			},
 			cart: [],
+			remove_id: [],
 			total: '',
 			purchaseOnProgress: false,
 			productStockText:'',
@@ -310,6 +313,7 @@
 				}
 
 				this.cart.push(product);
+				this.new_cart.push(product);
 				this.calculateTotal();
 				this.clearProduct();
 				
@@ -373,7 +377,7 @@
 
 
 				let formData = new FormData();
-				this.cart.forEach(function(pro, ind) {
+				this.new_cart.forEach(function(pro, ind) {
 					if (pro.hasOwnProperty('image')) {
 						let files = pro.image;
 						for (let i = 0; i < files.length; i++) {
@@ -383,8 +387,9 @@
 					}
 				});
 				formData.append('customer', JSON.stringify(this.selectedCustomer));
-				formData.append('cart', JSON.stringify(this.cart));
+				formData.append('new_cart', JSON.stringify(this.new_cart));
 				formData.append('purchase', JSON.stringify(this.purchase));
+				formData.append('remove_id', JSON.stringify(this.remove_id));
 				formData.append('total', JSON.stringify(this.total));
 
 
@@ -400,16 +405,19 @@
 				})
 			},
 
-			async removeFromCart(ind) {
+			async removeFromCart(ind,id) {
 				// }
+                this.remove_id.push(id);
 				this.cart.splice(ind, 1);
 				this.calculateTotal();
+                // console.log(id);
+
 			},
 
 			getSales(){
 				 let id = this.purchase.salesId;
 				  axios.get('/marchant-get-sales/'+id).then(res=>{
-					  console.log(res.data);
+					//   console.log(res.data);
 					let r = res.data.sales[0];
 					this.purchase.salesType = r.SaleMaster_SaleType;
 					this.purchase.subTotal = r.SaleMaster_SubTotalAmount;
@@ -417,7 +425,7 @@
 					this.purchase.payment_type = r.payment_type;
 
 					// SaleMaster_TotalSaleAmount
-					console.log(r.SalseCustomer_IDNo);
+					// console.log(r.SalseCustomer_IDNo);
 					this.selectedCustomer = {
 						Customer_SlNo: r.SalseCustomer_IDNo,
 						Customer_Code: r.Customer_Code,
@@ -428,7 +436,7 @@
 						Customer_Type: r.Customer_Type
 					}
 
-					console.log(res.data.saleDetails);
+					// console.log(res.data.saleDetails);
 			
 					
 					res.data.saleDetails.forEach(product => {
@@ -440,11 +448,13 @@
 							selling_price: product.SaleDetails_TotalAmount,
 							purchase_price: product.Purchase_Rate,
 							total: product.total,
+							SaleDetails_SlNo: product.SaleDetails_SlNo,
 							
 						}
 
 						this.cart.push(cartProduct);
 					})
+                    console.log(this.cart);
 				
 
 					let gCustomerInd = this.customers.findIndex(c => c.Customer_Type == 'G');
