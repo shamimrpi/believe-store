@@ -174,6 +174,7 @@
 				Customer_Name: '',
 				invoiceNo: '<?php echo $invoice; ?>',
 				subTotal: 0.00,
+				salesType: 'marchant',
 				discount: 0.00,
 				cost: 0.00,
 				total: 0.00,
@@ -221,6 +222,7 @@
 			this.getCategories();
 			this.getCustomers();
 			this.getSales();
+			console.log(this.purchase.salesType);
 			// this.getCart();
 			// console.log(this.selectedCustomer.Customer_Type);
 		},
@@ -256,9 +258,10 @@
 			},
 			
 			async getCustomers() {
-				await axios.post('/marchant-get_customers').then(res => {
+				
+				await axios.post('/marchant-get_customers',{customerType: this.purchase.salesType}).then(res => {
 					this.customers = res.data;
-					
+					console.log(this.customers);
 				
 				})
 			},
@@ -417,8 +420,9 @@
 			getSales(){
 				 let id = this.purchase.salesId;
 				  axios.get('/marchant-get-sales/'+id).then(res=>{
-					//   console.log(res.data);
+					  
 					let r = res.data.sales[0];
+					console.log(r);
 					this.purchase.salesType = r.SaleMaster_SaleType;
 					this.purchase.subTotal = r.SaleMaster_SubTotalAmount;
 					this.total = r.SaleMaster_TotalSaleAmount;
@@ -430,15 +434,15 @@
 						Customer_SlNo: r.SalseCustomer_IDNo,
 						Customer_Code: r.Customer_Code,
 						Customer_Name: r.Customer_Name,
-						display_name: r.Customer_Type ==  `${r.Customer_Code} - ${r.Customer_Name}`,
+						display_name: r.Customer_Type == 'G' ? 'General Customer' : `${r.Customer_Code} - ${r.Customer_Name}`,
 						Customer_Mobile: r.Customer_Mobile,
 						Customer_Address: r.Customer_Address,
 						Customer_Type: r.Customer_Type
 					}
 
 					// console.log(res.data.saleDetails);
-			
 					
+				
 					res.data.saleDetails.forEach(product => {
 						let cartProduct = {
 							product_serialNo: product.Product_IDNo,
@@ -454,7 +458,7 @@
 
 						this.cart.push(cartProduct);
 					})
-                    console.log(this.cart);
+                    // console.log(this.cart);
 				
 
 					let gCustomerInd = this.customers.findIndex(c => c.Customer_Type == 'G');

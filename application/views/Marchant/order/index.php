@@ -4,7 +4,7 @@
 			<div class="form-area custom-card">
 				<h5 class="heading"><i class="fa fa-user-plus"></i> Supplier & Product Information</h5>
 				<?php $customer_id = $customer->Customer_SlNo ?>
-
+				
 				<div class="row">
 					<div class="col-md-6">
 						<div class="row">
@@ -168,7 +168,6 @@
 			selectedFile: null,
 			customer_id: '<php echo $customer_id ?>',
 			purchase: {
-				salesId: parseInt('<?php echo $salesId;?>'),
 				Customer_Name: '',
 				invoiceNo: '<?php echo $invoice; ?>',
 				subTotal: 0.00,
@@ -214,6 +213,7 @@
 
 		}),
 		created() {
+			// console.log(this.purchase.inovice);
 			// this.getProduct();
 			this.getCategories();
 			this.getCustomers();
@@ -232,6 +232,7 @@
 			getCategories() {
 				axios.get('/marchant-get_categories').then(res => {
 					this.categories = res.data;
+					console.log(this.categories);
 				})
 			},
 
@@ -389,9 +390,7 @@
 
 
 				let url = '/marchant-order';
-				if(this.purchase.salesId != 0){
-					url = "/marchant-order-update";
-				}
+				
 				axios.post(url, formData).then(async res => {
 					let r = res.data;
 					alert('order submited successfully');

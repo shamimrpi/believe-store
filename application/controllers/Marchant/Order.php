@@ -19,12 +19,17 @@ class Order extends CI_Controller
     public function order()
     {
         $martchant_id = $this->session->userdata('marchant_id');
-        $marchant_data = $this->db->query("select * from tbl_marchant_wholesaler where customer_type = 'wholeseller' and id = $martchant_id ")->row();
+        $marchant_data = $this->db->query("select * from tbl_marchant_wholesaler where id = $martchant_id ")->row();
+        // print_r($marchant_data);
+        // exit;
         $customer_id = $marchant_data->customer_id;
         $customer = $this->db->query("select * from tbl_customer where Customer_SlNo = $customer_id  ")->row();
         $data['customer'] = $customer;
         $data['invoice'] = $this->m_invoice->marchantInvoice();
+        
         $data['title'] = "Dashboard";
+        // print_r($data);
+        // exit;
         $data['martchant_content'] = $this->load->view('Marchant/order/index', $data, true);
         $this->load->view('Marchant/marchant_master', $data);
     }
@@ -400,6 +405,7 @@ class Order extends CI_Controller
         c.Customer_Mobile,
         c.Customer_Address,
         c.Customer_Type,
+        sm.SalseCustomer_IDNo,
         br.Brunch_name
         from tbl_salesmaster sm
         left join tbl_customer c on c.Customer_SlNo = sm.SalseCustomer_IDNo

@@ -192,7 +192,7 @@ class Sales extends CI_Controller {
         $data['isService'] = $productOrService == 'product' ? 'false' : 'true';
         $data['salesId'] = $salesId;
         $data['invoice'] = $sales->SaleMaster_InvoiceNo;
-        $data['content'] = $this->load->view('Administrator/sales/product_sales', $data, TRUE);
+        $data['content'] = $this->load->view('Administrator/sales/product_sales_edit', $data, TRUE);
         $this->load->view('Administrator/index', $data);
     }
 
@@ -328,6 +328,7 @@ class Sales extends CI_Controller {
                     p.Product_Code,
                     p.Product_Name,
                     pc.ProductCategory_Name,
+                    sd.SaleDetails_SlNo,
                     u.Unit_Name
                 from tbl_saledetails sd
                 join tbl_product p on p.Product_SlNo = sd.Product_IDNo
@@ -370,7 +371,7 @@ class Sales extends CI_Controller {
               $customer = json_decode($this->input->post('customer'));
               $sales = json_decode($this->input->post('sales'));
               $salesId = $sales->salesId;
-
+              $remove_id = json_decode($this->input->post('remove_id'));
 
             $sale = array(
                 'SaleMaster_TotalSaleAmount'     => $sales->total,
@@ -391,16 +392,20 @@ class Sales extends CI_Controller {
 
 
             
-            $currentSaleDetails = $this->db->query("select * from tbl_saledetails where SaleMaster_IDNo = ?", $salesId)->result();
-            $this->db->query("delete from tbl_saledetails where SaleMaster_IDNo = ?", $salesId);
-
-            foreach($currentSaleDetails as $product){
+            foreach($remove_id as $delete_id){
+                $this->db->query("delete from tbl_saledetails where SaleDetails_SlNo = ?", $delete_id); 
+                $images = $this->db->query("select * from tbl_product_images where SaleDetails_SlNo =$delete_id ")->row();
+                $data_image = $images->image;
+                if($data_image){
+                    @unlink('/uploads/productImage/'.$data_image);
+                    $this->db->query("delete from tbl_product_images where SaleDetails_SlNo = ?", $delete_id); 
+                }
                 $this->db->query("
                     update tbl_currentinventory 
                     set sales_quantity = sales_quantity - ? 
                     where product_id = ?
                     
-                ", [$product->SaleDetails_TotalQuantity, $product->Product_IDNo ]);
+                ", [-1, $images->Product_IDNo ]);
             }
     
             foreach($carts as $key=> $cartProduct){
