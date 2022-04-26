@@ -4,150 +4,138 @@
 			<div class="form-area custom-card">
 				<h5 class="heading"><i class="fa fa-user-plus"></i> Supplier & Product Information</h5>
 				<?php $customer_id = $customer->Customer_SlNo ?>
-				
-				<div class="row">
-					<div class="col-md-6">
-						<div class="row">
-						<div class="form-group">
-								<label class="col-xs-4 control-label no-padding-right"> Invoice No. </label>
-								<div class="col-xs-8">
+				<form v-on:submit.prevent="addToCart" id="custom-form">
+					<div class="row">
+						<div class="col-md-6">
+							<label class="col-xs-4 control-label no-padding-right"> Invoice No. </label>
+							<div class="col-xs-8">
 								<input type="text" v-model="purchase.invoiceNo" class="form-control" v-model="selectedCustomer.Customer_Name" readonly />
-								</div>
 							</div>
-							<?php if($customer->Customer_Type == 'marchant') { ?> 
-							<div  class="form-group" >
+						</div>
+						<?php echo $customer->Customer_SlNo ?>
+						
+						<?php if ($customer->Customer_Type == 'marchant') { ?>
+							<div class="col-md-6">
 								<label for="name">Select Customer<span class="text-danger">*</span> </label>
 								<v-select v-bind:options="customers" v-model="selectedCustomer" label="display_name"></v-select>
 							</div>
-							<?php } ?>
-							<div class="form-group" style="display:none;" v-bind:style="{display: selectedCustomer.Customer_Type == 'wholesaller' ? 'none' : ''}">
-								<label class="col-xs-4 control-label no-padding-right"> Name </label>
-								<div class="col-xs-8">
-									<input type="text" id="customerName" placeholder="Customer Name" class="form-control" v-model="selectedCustomer.Customer_Name" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true" />
-								</div>
-							</div>
-
-							<div class="form-group" v-if="">
-								<label class="col-xs-4 control-label no-padding-right"> Mobile No </label>
-								<div class="col-xs-8">
-									<input type="text" id="mobileNo" placeholder="Mobile No" class="form-control" v-model="selectedCustomer.Customer_Mobile" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-xs-4 control-label no-padding-right">Customer Email </label>
-								<div class="col-xs-8">
-									<input type="text" id="mobileNo" placeholder="Customer Email" class="form-control" v-model="selectedCustomer.Customer_Email" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-xs-4 control-label no-padding-right"> Address </label>
-								<div class="col-xs-8">
-									<textarea id="address" placeholder="Address" class="form-control" v-model="selectedCustomer.Customer_Address" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true"></textarea>
-								</div>
+						
+						<div class="col-md-6" style="display:none;" v-bind:style="{display: selectedCustomer.Customer_Type == 'wholesaller' ? 'none' : ''}">
+							<label class="col-xs-4 control-label no-padding-right"> Name </label>
+							<div class="col-xs-8">
+								<input type="text" id="customerName" placeholder="Customer Name" class="form-control" v-model="selectedCustomer.Customer_Name" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true" />
 							</div>
 						</div>
-					</div>
-					<div class="col-md-6">
-						<form v-on:submit.prevent="addToCart" id="custom-form">
-							<div class="row">
-								<div class="form-group">
-									<label for="name">Category<span class="text-danger">*</span> </label>
-									<v-select v-bind:options="categories" v-model="selectCategory" label="ProductCategory_Name" v-on:input="changeCategory"></v-select>
-								</div>
-								<div class="form-group">
-									<label for="name">Product<span class="text-danger">*</span> </label>
-									<v-select v-bind:options="products" v-model="selectedProduct" label="Product_Name" v-on:input="productOnChange"></v-select>
-								</div>
-								<h5 v-if="productStock<0">{{productStockText}}</h5>
-								<div class="form-group" v-if="productStock>0">
-									<div class="stock-part">
-										<h5>{{productStockText}}</h5>
-										<p class="text-success">{{productStock}}</p>
-									</div>
-								
-								</div>
-								<div class="form-group">
-									<label for="name">Purchase Price <span class="text-danger">*</span> </label>
-									<input type="text" v-model="selectedProduct.Product_Purchase_Rate" autocomplete="off" class="form-control shadow-none " id="name" placeholder="Purchase Price" required>
-								</div>
-
-								<div class="form-group">
-									<label for="name">Selling Price <span class="text-danger">*</span> </label>
-									<input type="text" v-model="selectedProduct.Product_SellingPrice" class="form-control shadow-none " placeholder="Selling Price" required>
-								</div>
-								<?php if($customer->Customer_Type == 'marchant') {?>
-									<div class="form-group">
-									<label for="name">Muliple Image Upload </label>
-									<input type="file" name="images" id="multi_image" ref="imageUpload" class="form-control form-control-sm" maxlength="10" multiple="multiple" @change="previewImage" required/>
-								</div>
-								<?php } ?>
-								<?php   if($customer->Customer_Type == 'wholeseller') {?> 
-
-									<div class="form-group">
-										<label for="name"> Image Upload </label>
-										<input type="file" name="images" id="multi_image" ref="imageUpload" class="form-control form-control-sm" maxlength="10" @change="previewImage" required/>
-									</div>
-								<?php  } ?>
-
+						<div class="col-md-6">
+							<label class="col-xs-4 control-label no-padding-right"> Mobile No </label>
+							<div class="col-xs-8">
+								<input type="text" id="mobileNo" placeholder="Mobile No" class="form-control" v-model="selectedCustomer.Customer_Mobile" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true" />
 							</div>
-							<div class="d-flex mt-3">
-								<button type="submit" class="btn btn-success cart-btn ms-auto">Add Cart</button>
+						</div>
+						<div class="col-md-6">
+							<label class="col-xs-4 control-label no-padding-right">Customer Email </label>
+							<div class="col-xs-8">
+								<input type="text" id="mobileNo" placeholder="Customer Email" class="form-control" v-model="selectedCustomer.Customer_Email" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true" />
 							</div>
-						</form>
-					</div>
+						</div>
+						<div class="col-md-6">
+							<label class="col-xs-4 control-label no-padding-right"> Address </label>
+							<div class="col-xs-8">
+								<textarea id="address" placeholder="Address" class="form-control" v-model="selectedCustomer.Customer_Address" v-bind:disabled="selectedCustomer.Customer_Type == 'G' ? false : true"></textarea>
+							</div>
+						</div>
+						<?php } ?>
+						<div class="col-md-6">
+							<label for="name">Category<span class="text-danger">*</span> </label>
+							<v-select v-bind:options="categories" v-model="selectCategory" label="ProductCategory_Name" v-on:input="changeCategory"></v-select>
+						</div>
+						<div class="col-md-6">
+							<label for="name">Product<span class="text-danger">*</span> </label>
+							<v-select v-bind:options="products" v-model="selectedProduct" label="Product_Name" v-on:input="productOnChange"></v-select>
+						</div>
+						<h5 v-if="productStock<0">{{productStockText}}</h5>
+						<div class="col-md-6" v-if="productStock>0">
+							<div class="stock-part">
+								<h5>{{productStockText}}</h5>
+								<p class="text-success">{{productStock}}</p>
+							</div>
 
-				</div>
-								
+						</div>
+						<div class="col-md-6">
+							<label for="name">Selling Price <span class="text-danger">*</span> </label>
+							<input type="text" v-model="selectedProduct.Product_SellingPrice" class="form-control shadow-none " placeholder="Selling Price" required>
+						</div>
+
+						<?php if ($customer->Customer_Type == 'marchant') { ?>
+							<div class="col-md-6">
+								<label for="name">Muliple Image Upload </label>
+								<input type="file" name="images" id="multi_image" ref="imageUpload" class="form-control form-control-sm" maxlength="10" multiple="multiple" @change="previewImage" required />
+							</div>
+						<?php } else { ?>
+
+							<div class="col-md-6">
+								<label for="name"> Image Upload </label>
+								<input type="file" name="images" id="multi_image" ref="imageUpload" class="form-control form-control-sm" maxlength="10" @change="previewImage" required />
+							</div>
+						<?php  } ?>
+						<div class="d-flex mt-3">
+						<button type="submit" class="btn btn-success cart-btn ms-auto">Add Cart</button>
+						</div>
+					</div>
+				</form>
 				<div class="row mt-3">
-					<table class="w-100 cart-table" style="display:none;" v-bind:style="{display: cart.length > 0 ? '' : 'none'}">
-						<tr class="table-heading">
-							<th style="width:10%;color:#000;">Sl</th>
-							<th style="width:15%;color:#000;">Product Code</th>
-							<th style="width:20%;color:#000;">Product Name</th>
-							<th style="width:7%;color:#000;">Qty</th>
-							<th style="width:8%;color:#000;">Rate</th>
-							<th style="width:10%;color:#000;">Action</th>
-						</tr>
-						<tr v-for="(product, sl) in cart">
-							<td>{{ sl + 1}}</td>
-							<td>{{ product.product_code }}</td>
-							<td>{{ product.Product_Name }}</td>
-							<td>{{ product.quantity }}</td>
-							<td>{{ product.selling_price }}</td>
-							<td><a href="#" v-on:click.prevent="removeFromCart(sl)"><i class="fa fa-trash text-danger"></i></a></td>
-						</tr>
-						</tr>
-                        <tr>
-							<td colspan="7"></td>
-						</tr>
+			<table class="w-100 cart-table" style="display:none;" v-bind:style="{display: cart.length > 0 ? '' : 'none'}">
+				<tr class="table-heading">
+					<th style="width:10%;color:#000;">Sl</th>
+					<th style="width:15%;color:#000;">Product Code</th>
+					<th style="width:20%;color:#000;">Product Name</th>
+					<th style="width:7%;color:#000;">Qty</th>
+					<th style="width:8%;color:#000;">Rate</th>
+					<th style="width:10%;color:#000;">Action</th>
+				</tr>
+				<tr v-for="(product, sl) in cart">
+					<td>{{ sl + 1}}</td>
+					<td>{{ product.product_code }}</td>
+					<td>{{ product.Product_Name }}</td>
+					<td>{{ product.quantity }}</td>
+					<td>{{ product.selling_price }}</td>
+					<td><a href="#" v-on:click.prevent="removeFromCart(sl)"><i class="fa fa-trash text-danger"></i></a></td>
+				</tr>
+				</tr>
+				<tr>
+					<td colspan="7"></td>
+				</tr>
 
-						<tr style="font-weight: bold;">
-							<td colspan="4">Note</td>
-							<td colspan="3">Sub Total</td>
-						</tr>
-                        <tr>
-							<td colspan="4"><textarea style="width: 100%;font-size:13px;" placeholder="Note" v-model="purchase.note"></textarea></td>
-							<td colspan="3" style="padding-top: 15px;font-size:18px;">{{total }}</td>
-						</tr>
+				<tr style="font-weight: bold;">
+					<td colspan="4">Note</td>
+					<td colspan="3">Sub Total</td>
+				</tr>
+				<tr>
+					<td colspan="4"><textarea style="width: 100%;font-size:13px;" placeholder="Note" v-model="purchase.note"></textarea></td>
+					<td colspan="3" style="padding-top: 15px;font-size:18px;">{{total }}</td>
+				</tr>
 
 
-					</table>
-				</div>
-			</div>
-		</div>
-									
-		<div class="col-md-4 ">
-			<div class="form-area custom-card card">
-				<h5 class="heading"><i class="fas fa-list me-1"></i>Amount Details</h5>
-				<label for="name">Total </label>
-				<input type="number" v-model="total" class="form-control" readonly>
-				<label for="name">Advance </label>
-				<input type="number" v-model="purchase.advnace"  class="form-control">
-				<button class="btn btn-success mt-3 " v-on:click="savePurchase">Purchase</button>
+			</table>
+		</div>		
 
-			</div>
-		</div>
+
+		
 	</div>
+</div>
+
+<div class="col-md-4 ">
+	<div class="form-area custom-card card">
+		<h5 class="heading"><i class="fas fa-list me-1"></i>Amount Details</h5>
+		<label for="name">Total </label>
+		<input type="number" v-model="total" class="form-control" readonly>
+		<label for="name">Advance </label>
+		<input type="number" v-model="purchase.advnace" class="form-control">
+		<button class="btn btn-success mt-3 " v-on:click="savePurchase">Purchase</button>
+
+	</div>
+</div>
+</div>
 </div>
 
 <script src="<?php echo base_url(); ?>assets/js/vue/vue.min.js"></script>
@@ -183,6 +171,7 @@
 				ProductCategory_SlNo: '',
 				ProductCategory_Name: 'Select Category',
 			},
+			
 			selectedProduct: {
 				Product_SlNo: '',
 				Product_Code: '',
@@ -208,8 +197,8 @@
 			cart: [],
 			total: '',
 			purchaseOnProgress: false,
-			productStockText:'',
-			productStock:''
+			productStockText: '',
+			productStock: ''
 
 		}),
 		created() {
@@ -242,22 +231,22 @@
 					this.products = res.data;
 				})
 			},
-		
+
 
 			calculateTotal() {
 
 				this.total = this.cart.reduce(function(sum, current) {
 					return sum + parseFloat(current.selling_price)
-					}, 0);
-				
+				}, 0);
+
 
 			},
-			
+
 			async getCustomers() {
 				await axios.post('/marchant-get_customers').then(res => {
 					this.customers = res.data;
-					
-				
+
+
 				})
 			},
 			async customerOnChange() {
@@ -271,9 +260,11 @@
 
 				this.calculateTotal();
 			},
-			async productOnChange(){
-				if((this.selectedProduct.Product_SlNo != '' || this.selectedProduct.Product_SlNo != 0)){
-					this.productStock = await axios.post('/marchant-get_product_stock', {productId: this.selectedProduct.Product_SlNo}).then(res => {
+			async productOnChange() {
+				if ((this.selectedProduct.Product_SlNo != '' || this.selectedProduct.Product_SlNo != 0)) {
+					this.productStock = await axios.post('/marchant-get_product_stock', {
+						productId: this.selectedProduct.Product_SlNo
+					}).then(res => {
 						return res.data;
 					})
 
@@ -286,10 +277,10 @@
 				this.selectedProduct.total = this.selectedProduct.selling_price;
 
 			},
-		
+
 
 			addToCart() {
-				if (this.productStock <0) {
+				if (this.productStock < 0) {
 					alert('Stock not available');
 					return;
 				}
@@ -298,7 +289,7 @@
 					alert('Product exists in cart');
 					return;
 				}
-				
+
 				let product = {
 					product_serialNo: this.selectedProduct.Product_SlNo,
 					Product_Name: this.selectedProduct.Product_Name,
@@ -313,7 +304,7 @@
 				this.cart.push(product);
 				this.calculateTotal();
 				this.clearProduct();
-				
+
 				// $('input([type=file])').val('');
 				// $('#multi_image').val(null);
 			},
@@ -327,7 +318,7 @@
 					} else {
 						this.selectedFile = null;
 					}
-					
+
 				}
 
 			},
@@ -345,18 +336,19 @@
 				}
 				// $('#multi_image').val('');
 				// this.selectedFile = null;
-				
+
 				// $('#custom-form').trigger('reset');
 
 			},
-		
+
 
 			async savePurchase() {
+			
 				if (this.selectedCustomer.Customer_SlNo == '') {
 					alert('Select Customer');
 					return;
-				}
-
+				
+				
 				if (this.cart.length == '') {
 					alert('Cart is empty');
 					return;
@@ -378,7 +370,7 @@
 					if (pro.hasOwnProperty('image')) {
 						let files = pro.image;
 						for (let i = 0; i < files.length; i++) {
-							formData.append(ind+'[]', files[i]);
+							formData.append(ind + '[]', files[i]);
 						}
 						// formData.append(ind, pro.image);
 					}
@@ -390,7 +382,7 @@
 
 
 				let url = '/marchant-order';
-				
+
 				axios.post(url, formData).then(async res => {
 					let r = res.data;
 					alert('order submited successfully');
@@ -405,10 +397,10 @@
 				this.calculateTotal();
 			},
 
-			getSales(){
-				 let id = this.purchase.salesId;
-				  axios.get('/marchant-get-sales/'+id).then(res=>{
-					  console.log(res.data);
+			getSales() {
+				let id = this.purchase.salesId;
+				axios.get('/marchant-get-sales/' + id).then(res => {
+					console.log(res.data);
 					let r = res.data.sales[0];
 					this.purchase.salesType = r.SaleMaster_SaleType;
 					this.purchase.subTotal = r.SaleMaster_SubTotalAmount;
@@ -421,15 +413,15 @@
 						Customer_SlNo: r.SalseCustomer_IDNo,
 						Customer_Code: r.Customer_Code,
 						Customer_Name: r.Customer_Name,
-						display_name: r.Customer_Type ==  `${r.Customer_Code} - ${r.Customer_Name}`,
+						display_name: r.Customer_Type == `${r.Customer_Code} - ${r.Customer_Name}`,
 						Customer_Mobile: r.Customer_Mobile,
 						Customer_Address: r.Customer_Address,
 						Customer_Type: r.Customer_Type
 					}
 
 					console.log(res.data.saleDetails);
-			
-					
+
+
 					res.data.saleDetails.forEach(product => {
 						let cartProduct = {
 							product_serialNo: product.Product_IDNo,
@@ -439,16 +431,16 @@
 							selling_price: product.SaleDetails_TotalAmount,
 							purchase_price: product.Purchase_Rate,
 							total: product.total,
-							
+
 						}
 
 						this.cart.push(cartProduct);
 					})
-				
+
 
 					let gCustomerInd = this.customers.findIndex(c => c.Customer_Type == 'G');
 					this.customers.splice(gCustomerInd, 1);
-					
+
 				})
 			},
 

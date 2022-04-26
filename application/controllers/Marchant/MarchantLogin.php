@@ -105,7 +105,7 @@ class MarchantLogin extends CI_Controller
         $customer = array(
             'Customer_Code'  => $this->mt->generateCustomerCode(),
             'Customer_Name'  => $inputs->name,
-            'Customer_Type'  => 'retail',
+            'Customer_Type'  => 'marchant',
             'Customer_Mobile' => $inputs->mobile,
 
         );
@@ -138,7 +138,7 @@ class MarchantLogin extends CI_Controller
         $customer = array(
             'Customer_Code'  => $this->mt->generateCustomerCode(),
             'Customer_Name'  => $form->name,
-            'Customer_Type'  => 'wholesale',
+            'Customer_Type'  => 'wholeseller',
             'Customer_Mobile' => $form->mobile,
 
         );
